@@ -16,7 +16,7 @@
 
 class Raven_Client
 {
-    const VERSION = '1.11.x-dev';
+    const VERSION = '1.12.0';
 
     const PROTOCOL = '6';
 
@@ -131,11 +131,6 @@ class Raven_Client
     protected $_shutdown_function_has_been_set;
 
     /**
-     * @var bool
-     */
-    public $useCompression;
-
-    /**
      * @var Raven_TransactionStack
      */
     public $transaction;
@@ -209,7 +204,6 @@ class Raven_Client
         $this->context = new Raven_Context();
         $this->breadcrumbs = new Raven_Breadcrumbs();
         $this->_shutdown_function_has_been_set = false;
-        $this->useCompression = function_exists('gzcompress');
 
         $this->sdk = Raven_Util::get($options, 'sdk', array(
             'name' => 'sentry-php',
@@ -1014,13 +1008,6 @@ class Raven_Client
             }
             return false;
         }
-
-        if ($this->useCompression) {
-            $message = gzcompress($message);
-        }
-
-        // PHP's builtin curl_* function are happy without this, but the exec method requires it
-        $message = base64_encode($message);
 
         return $message;
     }
